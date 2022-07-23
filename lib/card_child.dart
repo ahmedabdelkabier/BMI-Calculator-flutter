@@ -18,6 +18,7 @@ class CardChild extends StatelessWidget {
       children: <Widget>[
         Icon(
           cardIcon,
+          color: Colors.white,
           size: 80.0,
         ),
         const SizedBox(
