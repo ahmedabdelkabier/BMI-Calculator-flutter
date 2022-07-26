@@ -12,6 +12,7 @@ class BMICalcualtor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: AppBarTheme(backgroundColor: Color(0xFF0a0c21)),
         scaffoldBackgroundColor: Color(0xFF0a0c21),
