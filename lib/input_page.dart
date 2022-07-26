@@ -1,12 +1,13 @@
+import 'package:bmi_calc/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'card_child.dart';
 import 'reusable_card.dart';
-
-const activeCardColor = Color(0xFF1E1D33);
-const inactiveCardCOlor = Color(0xFF11132390);
-const buttomContainerColor = Color(0xFFEB1555);
-const buttomContainerHight = 80.0;
+import 'rounded_icon_button.dart';
+import 'constants.dart';
+import 'result_page.dart';
+import 'bottom_button.dart';
+import 'calculator_brain.dart';
 
 enum HummanType {
   male,
@@ -21,6 +22,11 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   HummanType selectedGender = HummanType.non;
+  //height in cm
+  int height = 180;
+  //weight in Kg
+  int weight = 60;
+  int Age = 20;
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +86,53 @@ class _InputPageState extends State<InputPage> {
                 Expanded(
                   child: ReusableCard(
                     colour: activeCardColor,
-                    cardChild: CardChild(
-                      cardIcon: FontAwesomeIcons.hackerNews,
-                      typo: '',
+                    cardChild: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        const Text(
+                          'Height',
+                          style: textStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: <Widget>[
+                            Text(
+                              height.toString(),
+                              style: kNumberTextStyle,
+                            ),
+                            const Text(
+                              'cm',
+                              style: textStyle,
+                            ),
+                          ],
+                        ),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            thumbColor: kActiveSliderPartColor,
+                            overlayColor: Color(0X29EB1555),
+                            activeTrackColor: Colors.white,
+                            inactiveTrackColor: kInactiveSliderPartColor,
+                            thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 13.0,
+                            ),
+                            overlayShape: const RoundSliderOverlayShape(
+                              overlayRadius: 23.0,
+                            ),
+                          ),
+                          child: Slider(
+                            value: height.toDouble(),
+                            min: kMinHeight.toDouble(),
+                            max: kMaxHeight.toDouble(),
+                            onChanged: (double newValue) {
+                              setState(() {
+                                height = newValue.toInt();
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )
@@ -95,29 +145,103 @@ class _InputPageState extends State<InputPage> {
                 Expanded(
                   child: ReusableCard(
                     colour: activeCardColor,
-                    cardChild: CardChild(
-                      cardIcon: FontAwesomeIcons.dAndD,
-                      typo: '',
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Weight',
+                          style: textStyle,
+                        ),
+                        Text(
+                          weight.toString(),
+                          style: kNumberTextStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RoundedIconButton(
+                                icon: FontAwesomeIcons.minus,
+                                pressed: () {
+                                  setState(() {
+                                    weight--;
+                                  });
+                                }),
+                            SizedBox(
+                              width: 15.0,
+                            ),
+                            RoundedIconButton(
+                                icon: FontAwesomeIcons.plus,
+                                pressed: () {
+                                  setState(() {
+                                    weight++;
+                                  });
+                                })
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: ReusableCard(
                     colour: activeCardColor,
-                    cardChild: CardChild(
-                      cardIcon: FontAwesomeIcons.vaadin,
-                      typo: '',
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Age',
+                          style: textStyle,
+                        ),
+                        Text(
+                          Age.toString(),
+                          style: kNumberTextStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RoundedIconButton(
+                              icon: FontAwesomeIcons.minus,
+                              pressed: () {
+                                setState(() {
+                                  Age--;
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            RoundedIconButton(
+                              icon: FontAwesomeIcons.plus,
+                              pressed: () {
+                                setState(() {
+                                  Age++;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 )
               ],
             ),
           ),
-          Container(
-            color: buttomContainerColor,
-            margin: EdgeInsets.only(top: 10.0),
-            height: buttomContainerHight,
-            width: double.infinity,
+          BottomButton(
+            title: 'CALCULATE',
+            onPress: () {
+              BMIBrain bmi = BMIBrain(height: height, weight: weight);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ResultPage(
+                    BMIResult: bmi.getResult(),
+                    result: bmi.calculateBMI(),
+                    interpolation: bmi.getInterpretation(),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
